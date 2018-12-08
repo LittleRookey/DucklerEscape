@@ -49,10 +49,15 @@ public class PlayerController : MonoBehaviour
     private bool infMal;
     private bool infBil;
 
+    private int malNum;
+    private int bilNum;
+
     public bool takeAction;
     // Use this for initialization
     void Start()
     {
+        malNum = 0;
+        bilNum = 0;
         effArr = new List<Effect>();
         effArr.Add(cardP.malaria);
         effArr.Add(cardP.bilharzia);
@@ -116,7 +121,6 @@ public class PlayerController : MonoBehaviour
                     controlHP(-3);
                     uiCon.updatePlayerHP();
                     ignoreNum++;
-                    purifyNum = 0;
                     makeActive();
                     checkContinuedDisease(gameControl.ef1);
 
@@ -129,7 +133,6 @@ public class PlayerController : MonoBehaviour
                     makeActive();
                     saveOrEatFood(f);
                     uiCon.updateSavedCardEffect(savedFood);
-                    checkContinuedDisease(gameControl.ef1);
 
                     uiCon.updatePlayerHP();
                     takeAction = false;
@@ -190,7 +193,7 @@ public class PlayerController : MonoBehaviour
         }
         if (!gameControl.ign.activeInHierarchy)
         {
-            gameControl.pur.SetActive(true);
+            gameControl.ign.SetActive(true);
         }
     }
 
@@ -208,7 +211,6 @@ public class PlayerController : MonoBehaviour
 
         if (f.effect.nameEffect.Equals("Cure"))
         {
-            //????
             CureDisease(gameControl.ef1);
             Debug.Log("Earned " + 1.ToString() + "HP" + "Disease cured");
         }
@@ -238,15 +240,24 @@ public class PlayerController : MonoBehaviour
         {
             if (ef2[i].isActive)
             {
+               
                 if (ef2[i].nameEffect.Equals("Malaria"))
                 {
-                    hpTotalLoss--;
+                    malNum++;
                     gameControl.malaria.gameObject.SetActive(true);
+                    if(malNum > 1)
+                    {
+                        hpTotalLoss--;
+                    }
                 }
                 else if (ef2[i].nameEffect.Equals("Bilharzia"))
                 {
-                    hpTotalLoss -= 2;
+                    bilNum++;
                     gameControl.bilharzia.gameObject.SetActive(true);
+                    if(bilNum > 1)
+                    {
+                        hpTotalLoss -= 2;
+                    }
                 }
             }
         }
@@ -270,10 +281,7 @@ public class PlayerController : MonoBehaviour
     public void saveOrEatFood(Food f)
     {
         EatFood(savedFood);
-        if(f.effect.nameEffect.Equals("Cure"))
-        {
-            CureDisease(gameControl.ef1);
-        }
+        checkDIseaseEat(savedFood);
         savedFood = f;
     }
 
@@ -284,6 +292,8 @@ public class PlayerController : MonoBehaviour
         {
             ef1[i].isActive = false;
         }
+        malNum = 0;
+        bilNum = 0;
         controlHP(1);
         setFalse();
         Debug.Log("diseases cured!---------------");
