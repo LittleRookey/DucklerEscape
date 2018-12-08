@@ -28,9 +28,15 @@ public class Effect {
   
         //noHPGain = new Effect(0, false);
 	}
-   
-	// Update is called once per frame
-	void Update () {
+
+    public Effect Clone()
+    {
+        Effect e1 = (Effect)this.MemberwiseClone();
+        return e1;
+    }
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 }

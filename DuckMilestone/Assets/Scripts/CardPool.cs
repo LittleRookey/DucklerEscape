@@ -25,9 +25,9 @@ public class CardPool : MonoBehaviour {
     private Popcorn popcorn;
     private Bread bread;
 
-    private Effect purifyEffect;
-    private Effect malaria;
-    private Effect bilharzia;
+    public Effect purifyEffect;
+    public Effect malaria;
+    public Effect bilharzia;
 
     public ArrayList effectsActive;
 
@@ -165,11 +165,11 @@ public class CardPool : MonoBehaviour {
 
         malaria = new Effect("Malaria", -1, false);
 
-        bilharzia = new Effect("Bilharzia", -1, false);
+        bilharzia = new Effect("Bilharzia", -2, false);
         
         effectExp1 = "lose 1 HP every turn";
         effectExp2 = "Cure all disease and +1 HP";
-        effectExp3 = "lose 1 HP every turn";
+        effectExp3 = "lose 2 HP every turn";
 
         effectsActive = new ArrayList();
         foods = new ArrayList();

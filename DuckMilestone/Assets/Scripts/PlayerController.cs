@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ePlayerAction{
+public enum ePlayerAction
+{
     Purify, Ignore, Save, Eat, Nothing
 };
 public class PlayerController : MonoBehaviour
@@ -17,7 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private UIController uiCon;
 
-    public ArrayList effArr;
+    public List<Effect> effArr;
 
     private float horizontal;
 
@@ -45,18 +46,24 @@ public class PlayerController : MonoBehaviour
 
     public int ignoreNum;
 
+    private bool infMal;
+    private bool infBil;
+
     public bool takeAction;
     // Use this for initialization
     void Start()
     {
-        effArr = new ArrayList();
-
+        effArr = new List<Effect>();
+        effArr.Add(cardP.malaria);
+        effArr.Add(cardP.bilharzia);
+        infMal = false;
+        infBil = false;
         ignoreNum = 0;
         purifyNum = 0;
-        
+
         noEffect = new Effect("No effect", 0, false);
         savedFood = new Food("No food", 0, noEffect, 0);
-        temp = new Food("No food", 0, noEffect, 0); 
+        temp = new Food("No food", 0, noEffect, 0);
         rb = GetComponent<Rigidbody2D>();
         playerHP = 15;
         uiCon.updatePlayerHP();
@@ -83,14 +90,12 @@ public class PlayerController : MonoBehaviour
     public void controlHP(int val)
     {
         playerHP += val;
-        uiCon.updatePlayerHP();
-
     }
 
     public IEnumerator PlayerAction(Food f)
     {
         WaitForSeconds pointFIve = new WaitForSeconds(.5f);
-        while(takeAction)
+        while (takeAction)
         {
             switch (state)
             {
@@ -99,7 +104,7 @@ public class PlayerController : MonoBehaviour
                     PurifyFood(f);
                     purifyNum++;
                     makeActive();
-                    ContinuosDisease(effArr);
+                    checkDIseaseEat(f);
 
                     uiCon.updatePlayerHP();
                     takeAction = false;
@@ -112,7 +117,7 @@ public class PlayerController : MonoBehaviour
                     ignoreNum++;
                     purifyNum = 0;
                     makeActive();
-                    ContinuosDisease(effArr);
+                    checkDIseaseEat(f);
 
                     uiCon.updatePlayerHP();
                     takeAction = false;
@@ -123,7 +128,7 @@ public class PlayerController : MonoBehaviour
                     makeActive();
                     saveOrEatFood(f);
                     uiCon.updateSavedCardEffect(savedFood);
-                    ContinuosDisease(effArr);
+                    checkDIseaseEat(f);
 
                     uiCon.updatePlayerHP();
                     takeAction = false;
@@ -133,7 +138,7 @@ public class PlayerController : MonoBehaviour
                     Debug.Log("Action Nothing");
                     EatFood(f);
                     makeActive();
-                    ContinuosDisease(effArr);
+                    checkDIseaseEat(f);
 
                     uiCon.updatePlayerHP();
                     takeAction = false;
@@ -143,6 +148,8 @@ public class PlayerController : MonoBehaviour
                     Debug.Log("your action is not valid");
                     uiCon.updatePlayerHP();
                     takeAction = false;
+
+                    checkDIseaseEat(f);
                     yield return pointFIve;
                     break;
             }
@@ -151,7 +158,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.CompareTag("Purify"))
+        if (collision.gameObject.CompareTag("Purify"))
         {
             state = ePlayerAction.Purify;
             uiCon.updateState();
@@ -173,6 +180,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // restrict using purify and ignore 
     public void makeActive()
     {
         if (!gameControl.pur.activeInHierarchy)
@@ -184,28 +192,68 @@ public class PlayerController : MonoBehaviour
             gameControl.pur.SetActive(true);
         }
     }
+
     public void EatFood(Food f)
     {
-        f.effect.isActive = true;
-        if(f.effect.isActive && !(f.effect.nameEffect.Equals("Cure")))
-        {
-            effArr.Add(f.effect);
-        }
-        if (f.effect.nameEffect.Equals("Cure"))
-        {
-            CureDisease(effArr);
-        }
         controlHP(f.hpEffect);
-        RunEffect(f.effect);
-        uiCon.updatePlayerHP();
         //TODO make the disease effect and rules that restrict using cards. 
     }
 
-
-    public void RunEffect(Effect e)
+    //
+    public void checkDIseaseEat(Food f)
     {
-        controlHP(e.hpLoss);
+        Effect[] ef1 = new Effect[2];
+        ef1 = (Effect[])effArr.ToArray();
+
+        if (f.effect.nameEffect.Equals("Cure"))
+        {
+            //????
+            CureDisease(ef1);
+            controlHP(1);
+            Debug.Log("Earned " + 1.ToString() + "HP" + "Disease cured");
+        }
+
+        if (f.effect.nameEffect.Equals("Malaria"))
+        {
+            int indexx = effArr.IndexOf(cardP.malaria);
+            ef1[indexx].isActive = true;
+            Debug.Log(string.Format("Index Num: {0}, {1}", effArr.IndexOf(cardP.malaria), cardP.malaria.nameEffect));
+        }
+        else if (f.effect.nameEffect.Equals("Bilharzia"))
+        {
+            int indexx = effArr.IndexOf(cardP.bilharzia);
+            ef1[indexx].isActive = true;
+            Debug.Log(string.Format("Index Num: {0}, {1}", effArr.IndexOf(cardP.bilharzia), ef1[indexx].nameEffect));
+        }
+
+        checkContinuedDisease(ef1);
     }
+
+    // applies on disease that is ongoing
+    public void checkContinuedDisease(Effect[] ef1)
+    {
+        int hpTotalLoss = 0;
+        for (int i = 0; i < ef1.Length; i++)
+        {
+            if (ef1[i].isActive)
+            {
+                if (ef1[i].nameEffect.Equals("Malaria"))
+                {
+                    hpTotalLoss--;
+                }
+                else if (ef1[i].nameEffect.Equals("Bilharzia"))
+                {
+                    hpTotalLoss -= 2;
+                }
+            }
+        }
+        controlHP(hpTotalLoss);
+        Debug.Log("lost " + hpTotalLoss.ToString() + "HP");
+
+    }
+
+
+
 
     public void PurifyFood(Food f)
     {
@@ -215,30 +263,6 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void ContinuosDisease(ArrayList ef)
-    {
-        Debug.Log("Disease ongoing!!!!!!!!!!");
-        object[] ob = ef.ToArray();
-        Effect[] eff = new Effect[ob.Length];
-        if (eff.Length != 0)
-        {
-            Debug.Log(eff.Length);
-            for(int i = 0; i< eff.Length; i++)
-            {
-                if (eff[i].nameEffect.Equals("Malaria"))
-                {
-                    RunEffect(eff[i]);
-                    uiCon.updatePlayerHP();
-                }
-                else if (eff[i].nameEffect.Equals("Bilharzia"))
-                {
-                    RunEffect(eff[i]);
-                    uiCon.updatePlayerHP();
-                }
-            }
-        }
-    }
-
     // updates the food inside storage
     public void saveOrEatFood(Food f)
     {
@@ -246,20 +270,13 @@ public class PlayerController : MonoBehaviour
         savedFood = f;
     }
 
-    public void CureDisease(ArrayList ef)
+    public void CureDisease(Effect[] ef1)
     {
-        Debug.Log("disease cured, +1HP");
-        playerHP++;
-        object[] ob = ef.ToArray();
-        Effect[] eff = new Effect[ob.Length];
-        for(int k = 0; k < ob.Length; k++)
+        for (int i = 0; i < ef1.Length; i++)
         {
-            eff[k] = (Effect)ob[k];
+            ef1[i].isActive = false;
         }
-        for (int i = 0; i < eff.Length; i++)
-        {
-            ef.Remove(eff[i]);
-        }
+        Debug.Log("diseases cured!---------------");
     }
 
 }

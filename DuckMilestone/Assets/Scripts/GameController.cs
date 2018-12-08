@@ -67,6 +67,8 @@ public class GameController : MonoBehaviour {
         uiCon.updateTimer(); 
 
         int ind = rand.Next(0, roundNum);
+
+        //spawn food
         cardP.spawnFood(ind);
         Food inst = cardP.spawnFood(ind);
         player.temp = inst;
@@ -92,6 +94,8 @@ public class GameController : MonoBehaviour {
         else
         {
             //TODO GameOver
+            player.playerHP = 0;
+            uiCon.updatePlayerHP();
             GameOver();
         }
     }
@@ -99,22 +103,24 @@ public class GameController : MonoBehaviour {
 
     public void GameOver()
     {
-        Application.Quit();
+        SceneManager.LoadScene(2);
     }
     // Update is called once per frame
     void Update () {
-        if(player.playerHP <= 0)
-        {
-            player.playerHP = 0;
-            GameOver();
-        }
-
 		if(roundNum <= 0)
         {
-            Debug.Log("Game end");
-            StopCoroutine(gameStart);
-            GameOver();
+            if (player.playerHP > 0)
+            {
+                SceneManager.LoadScene(3);
+            }
+            else
+            {
+                Debug.Log("Game end");
+                StopCoroutine(gameStart);
+                GameOver();
+            }
         }
+        
 
         
 	}
