@@ -197,6 +197,7 @@ public class PlayerController : MonoBehaviour
     public void EatFood(Food f)
     {
         controlHP(f.hpEffect);
+
         //TODO make the disease effect and rules that restrict using cards. 
     }
 
@@ -208,7 +209,6 @@ public class PlayerController : MonoBehaviour
         if (f.effect.nameEffect.Equals("Cure"))
         {
             //????
-            controlHP(1);
             CureDisease(gameControl.ef1);
             Debug.Log("Earned " + 1.ToString() + "HP" + "Disease cured");
         }
@@ -230,7 +230,7 @@ public class PlayerController : MonoBehaviour
     }
 
    
-    // applies on disease that is ongoing
+    // applies disease that is ongoing, affect hp
     public void checkContinuedDisease(Effect[] ef2)
     {
         int hpTotalLoss = 0;
@@ -270,6 +270,10 @@ public class PlayerController : MonoBehaviour
     public void saveOrEatFood(Food f)
     {
         EatFood(savedFood);
+        if(f.effect.nameEffect.Equals("Cure"))
+        {
+            CureDisease(gameControl.ef1);
+        }
         savedFood = f;
     }
 
@@ -280,6 +284,7 @@ public class PlayerController : MonoBehaviour
         {
             ef1[i].isActive = false;
         }
+        controlHP(1);
         setFalse();
         Debug.Log("diseases cured!---------------");
     }
