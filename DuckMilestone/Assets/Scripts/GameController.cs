@@ -18,6 +18,9 @@ public class GameController : MonoBehaviour {
     [SerializeField]
     private UIController uiCon;
 
+    [SerializeField]
+    public GameObject malaria, bilharzia;
+
     public GameObject pur;
 
     public GameObject ign;
@@ -27,6 +30,9 @@ public class GameController : MonoBehaviour {
     public int round;
     private Coroutine gameStart;
     int roundNum;
+
+    public Effect[] ef1;
+
     private void Start()
     {
         rand = new System.Random();
@@ -35,7 +41,9 @@ public class GameController : MonoBehaviour {
         round = 0;
         player.playerHP = 15;
         gameStart = StartCoroutine(gameFlow());
-
+        ef1 = new Effect[2];
+        malaria.gameObject.SetActive(false);
+        bilharzia.gameObject.SetActive(false);
     }
 
     private IEnumerator gameFlow()

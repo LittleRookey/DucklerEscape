@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
         effArr = new List<Effect>();
         effArr.Add(cardP.malaria);
         effArr.Add(cardP.bilharzia);
+        gameControl.ef1 = effArr.ToArray();
         infMal = false;
         infBil = false;
         ignoreNum = 0;
@@ -117,7 +118,7 @@ public class PlayerController : MonoBehaviour
                     ignoreNum++;
                     purifyNum = 0;
                     makeActive();
-                    checkDIseaseEat(f);
+                    checkContinuedDisease(gameControl.ef1);
 
                     uiCon.updatePlayerHP();
                     takeAction = false;
@@ -128,7 +129,7 @@ public class PlayerController : MonoBehaviour
                     makeActive();
                     saveOrEatFood(f);
                     uiCon.updateSavedCardEffect(savedFood);
-                    checkDIseaseEat(f);
+                    checkContinuedDisease(gameControl.ef1);
 
                     uiCon.updatePlayerHP();
                     takeAction = false;
@@ -199,51 +200,53 @@ public class PlayerController : MonoBehaviour
         //TODO make the disease effect and rules that restrict using cards. 
     }
 
-    //
+    // checks if the player has disease and if the player has
+    // malaria or bilharzia, set it true
     public void checkDIseaseEat(Food f)
     {
-        Effect[] ef1 = new Effect[2];
-        ef1 = (Effect[])effArr.ToArray();
 
         if (f.effect.nameEffect.Equals("Cure"))
         {
             //????
-            CureDisease(ef1);
             controlHP(1);
+            CureDisease(gameControl.ef1);
             Debug.Log("Earned " + 1.ToString() + "HP" + "Disease cured");
         }
 
         if (f.effect.nameEffect.Equals("Malaria"))
         {
             int indexx = effArr.IndexOf(cardP.malaria);
-            ef1[indexx].isActive = true;
+            gameControl.ef1[indexx].isActive = true;
             Debug.Log(string.Format("Index Num: {0}, {1}", effArr.IndexOf(cardP.malaria), cardP.malaria.nameEffect));
         }
         else if (f.effect.nameEffect.Equals("Bilharzia"))
         {
             int indexx = effArr.IndexOf(cardP.bilharzia);
-            ef1[indexx].isActive = true;
-            Debug.Log(string.Format("Index Num: {0}, {1}", effArr.IndexOf(cardP.bilharzia), ef1[indexx].nameEffect));
+            gameControl.ef1[indexx].isActive = true;
+            Debug.Log(string.Format("Index Num: {0}, {1}", effArr.IndexOf(cardP.bilharzia), gameControl.ef1[indexx].nameEffect));
         }
 
-        checkContinuedDisease(ef1);
+        checkContinuedDisease(gameControl.ef1);
     }
 
+   
     // applies on disease that is ongoing
-    public void checkContinuedDisease(Effect[] ef1)
+    public void checkContinuedDisease(Effect[] ef2)
     {
         int hpTotalLoss = 0;
-        for (int i = 0; i < ef1.Length; i++)
+        for (int i = 0; i < ef2.Length; i++)
         {
-            if (ef1[i].isActive)
+            if (ef2[i].isActive)
             {
-                if (ef1[i].nameEffect.Equals("Malaria"))
+                if (ef2[i].nameEffect.Equals("Malaria"))
                 {
                     hpTotalLoss--;
+                    gameControl.malaria.gameObject.SetActive(true);
                 }
-                else if (ef1[i].nameEffect.Equals("Bilharzia"))
+                else if (ef2[i].nameEffect.Equals("Bilharzia"))
                 {
                     hpTotalLoss -= 2;
+                    gameControl.bilharzia.gameObject.SetActive(true);
                 }
             }
         }
@@ -270,13 +273,20 @@ public class PlayerController : MonoBehaviour
         savedFood = f;
     }
 
+    
     public void CureDisease(Effect[] ef1)
     {
         for (int i = 0; i < ef1.Length; i++)
         {
             ef1[i].isActive = false;
         }
+        setFalse();
         Debug.Log("diseases cured!---------------");
     }
 
+    public void setFalse()
+    {
+        gameControl.bilharzia.gameObject.SetActive(false);
+        gameControl.malaria.gameObject.SetActive(false);
+    }
 }
