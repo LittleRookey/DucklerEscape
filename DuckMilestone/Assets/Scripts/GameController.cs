@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour {
         WaitForSeconds pointFIve = new WaitForSeconds(.5f);
         WaitForSeconds oneSec = new WaitForSeconds(1f);
         WaitForSeconds twoSec = new WaitForSeconds(2f);
-        if(player.purifyNum > 1)
+        if(player.purifyNum > 0)
         {
             pur.gameObject.SetActive(false);
             player.state = ePlayerAction.Nothing;

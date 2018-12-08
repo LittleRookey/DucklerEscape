@@ -141,7 +141,6 @@ public class PlayerController : MonoBehaviour
                 case ePlayerAction.Nothing:
                     Debug.Log("Action Nothing");
                     EatFood(f);
-                    makeActive();
                     checkDIseaseEat(f);
 
                     uiCon.updatePlayerHP();
