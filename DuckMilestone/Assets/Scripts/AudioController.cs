@@ -11,8 +11,10 @@ public class AudioController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         audio = GetComponent<AudioSource>();
-        audio.PlayOneShot(firstAudioClip, .6f);
+        audio.PlayOneShot(firstAudioClip, .35f);
+        audio.clip = secondAudioClip;
         audio.PlayDelayed(firstAudioClip.length);
+        Debug.Log(firstAudioClip.length);
     }
 
     
