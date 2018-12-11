@@ -111,7 +111,7 @@ public class GameController : MonoBehaviour {
 
     public void GameOver()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(3);
     }
     // Update is called once per frame
     void Update () {
@@ -119,7 +119,7 @@ public class GameController : MonoBehaviour {
         {
             if (player.playerHP > 0)
             {
-                SceneManager.LoadScene(3);
+                SceneManager.LoadScene(4);
             }
             else
             {

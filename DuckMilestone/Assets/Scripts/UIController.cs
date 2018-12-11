@@ -37,23 +37,23 @@ public class UIController : MonoBehaviour {
         {
             if (f.effect.nameEffect.Equals("Malaria"))
             {
-                savedCardEffect.text = string.Format("{0}: HP {1}", f.name, f.hpEffect);
+                savedCardEffect.text = string.Format("{0}: HP +{1}", f.name, f.hpEffect);
                 savedCardEffect2.text = string.Format("{0}: " + cardP.effectExp1, f.effect.nameEffect);
                 Debug.Log("Saved Fooddddddd");
             }
             else if (f.effect.nameEffect.Equals("Cure"))
             {
-                savedCardEffect.text = string.Format("{0}: HP {1}", f.name, f.hpEffect);
+                savedCardEffect.text = string.Format("{0}: HP +{1}", f.name, f.hpEffect);
                 savedCardEffect2.text = string.Format("{0}: " + cardP.effectExp2, f.effect.nameEffect);
             }
             else if (f.effect.nameEffect.Equals("Bilharzia"))
             {
-                savedCardEffect.text = string.Format("{0}: HP {1}", f.name, f.hpEffect);
+                savedCardEffect.text = string.Format("{0}: HP +{1}", f.name, f.hpEffect);
                 savedCardEffect2.text = string.Format("{0}: " + cardP.effectExp3, f.effect.nameEffect);
             }
             else
             {
-                savedCardEffect.text = string.Format("{0}: HP {1}", f.name, f.hpEffect);
+                savedCardEffect.text = string.Format("{0}: HP +{1}", f.name, f.hpEffect);
                 savedCardEffect2.text = string.Format("{0}: ", f.effect.nameEffect);
             }
         }

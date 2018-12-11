@@ -11,6 +11,10 @@ public class GameStart : MonoBehaviour {
         SceneManager.LoadScene(1);
     }
     
+    public void GameVolume()
+    {
+
+    }
     public void GameEnd()
     {
         Application.Quit();
